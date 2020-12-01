@@ -1,30 +1,86 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+  <div id="home">
+    <app-header v-if="!rootPage" :tirrgled="showMenu"
+      @triggle-menu="handleTriggleMenu"></app-header>
+    <pop-menu v-if="!rootPage" :show ="showMenu" :class="[showMenu?'menu_anim':'',hiddenCls]"
+    @select-menu="handleTriggleMenu">
+    </pop-menu>
+    <div id="__page_container"></div>
+    <router-view></router-view>
   </div>
-  <router-view/>
 </template>
 
+<script lang="ts">
+import {
+  defineComponent, ref, Ref, watch,
+} from 'vue';
+import { useRoute } from 'vue-router';
+import appHeader from './views/home/header.vue';
+import popMenu from './views/home/popmenu.vue';
+
+export default defineComponent({
+  name: 'Home',
+  components: { appHeader, popMenu },
+  setup() {
+    const showMenu: Ref<boolean> = ref(false);
+    const hiddenCls: Ref<string> = ref('');
+
+    const rootPage: Ref<boolean> = ref(true);
+    const route = useRoute();
+    const list = ['/login'];
+    watch(route, (val) => {
+      rootPage.value = list.includes(val.path);
+    });
+
+    let timer: any = null;
+    const handleTriggleMenu = (isShow: boolean) => {
+      if (!isShow) {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+          showMenu.value = isShow;
+        }, 500);
+        hiddenCls.value = 'menu_anim_out';
+      } else {
+        showMenu.value = isShow;
+        hiddenCls.value = '';
+      }
+    };
+
+    return {
+      handleTriggleMenu,
+      showMenu,
+      hiddenCls,
+      rootPage,
+    };
+  },
+});
+</script>
+
 <style lang="less">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
+  .menu_anim{
+    animation: fadeInLeft 0.5s ease;
+  }
+  .menu_anim_out{
+    animation: fadeOut 0.5s ease;
+  }
+  @keyframes fadeInLeft {
+    from{
+      transform: translateX(-200px);
+      opacity: 0.3;
+    }
+    to{
+      transform: translateX(0px);
+      opacity: 1;
     }
   }
-}
+  @keyframes fadeOut{
+    from{
+      transform: translateX(0px);
+      opacity: 1;
+    }
+    to{
+      transform: translateX(-200px);
+      opacity: 0.3;
+    }
+  }
 </style>

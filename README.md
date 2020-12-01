@@ -1,24 +1,19 @@
-# orz
+# ORZ项目
 
-## Project setup
-```
-npm install
-```
+## 技术选型
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+`Vue3`
+`Typescript`
+`Qiankun`
+`React`
+`Webpack5`
 
-### Compiles and minifies for production
-```
-npm run build
-```
+## 达到的效果
 
-### Lints and fixes files
-```
-npm run lint
-```
+做一个后端管理系统模板
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+- 登录模块
+- 用户管理模块
+- 权限模块
+- 日志模块
+- 文件中心
