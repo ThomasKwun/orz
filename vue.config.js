@@ -8,7 +8,9 @@ module.exports = {
   configureWebpack: {
     resolve: {
       alias: {
+        '@': path.resolve('src/'),
         '@utils': path.resolve('src/commom/utils/'),
+        '@comp': path.resolve('src/components/'),
       },
     },
   },

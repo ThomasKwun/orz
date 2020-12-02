@@ -22,7 +22,8 @@
       ],
       "@utils/*":[
         "src/commom/utils/*"
-      ]
+      ],
+      "@comp/*": ["src/components/*"],
     },
     "lib": [
       "esnext",

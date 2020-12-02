@@ -1,4 +1,7 @@
-
 interface Window {
-  _QIANKUN: boolean
+  _QIANKUN: boolean;
+}
+
+interface BaseState {
+  [key: string]: unknown;
 }

@@ -13,42 +13,41 @@
 
 <script lang="ts">
 import {
-  defineComponent, onMounted, ref, Ref,
+  defineComponent, ref, Ref,
 } from 'vue';
 import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
 import {
   timeSpeed, request, Iresponse, exec,
 } from '@utils/index';
-import Login, { LoginComp } from '../../components/business/login/index.vue';
+import { LoginState, LoginMutations } from '@/store/login';
+import Login, { LoginComp } from '@comp/business/login/index.vue';
 
+export interface IloginParams {
+  userName: string;
+  password: string;
+}
+export interface IloginResult {
+  token: string;
+  nickName: string;
+  userId: string;
+}
 export default defineComponent({
   name: 'LoginPage',
   components: {
     Login,
   },
   setup() {
+    const store = useStore();
     const $router = useRouter();
-    const defaultUserName: Ref<string> = ref('');
-    const defaultPwd: Ref<string> = ref('null');
+    const defaultUserName: Ref<string> = ref(localStorage.username || '');
+    const defaultPwd: Ref<string> = ref('123456');
     const tip: Ref<string> = ref('');
-    const setDefaultUserName = (name: string): void => {
-      localStorage.username = name;
-    };
-    const { timeStart, timeEnd } = timeSpeed();
     const loginRef: Ref<LoginComp | null> = ref(null);
-    interface IloginParams {
-      userName: string;
-      password: string;
-    }
-    interface IloginResult {
-      token: string;
-      nickName: string;
-      userId: string;
-    }
-    const doLogin = (params: IloginParams): Promise<Iresponse> => request('/login', params);
-    onMounted((): void => {
-      defaultUserName.value = (localStorage.username || '');
-    });
+    const { timeStart, timeEnd } = timeSpeed();
+
+    const loginApi = '/login';
+    const doLogin = (params: IloginParams): Promise<Iresponse> => request(loginApi, params);
     const handleLogin = (username: string, pwd: string): void => {
       timeStart();
       doLogin({
@@ -58,7 +57,9 @@ export default defineComponent({
         timeEnd('request-login');
         const loginRes: IloginResult = res?.data as IloginResult;
         if (res?.responseCode === '10001') {
-          setDefaultUserName(loginRes.nickName);
+          store.commit(LoginMutations.setState, { nickName: loginRes.nickName, password: '123456xx' } as LoginState);
+          localStorage.username = username;
+          localStorage.nickName = loginRes.nickName;
           localStorage.userId = loginRes.userId;
           localStorage.token = loginRes.token;
           tip.value = '';

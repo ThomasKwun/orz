@@ -8,7 +8,7 @@
     MyApplication</a>
   </div>
   <div class="welcome">
-    Welcome, ThomasKwun ,<span class="link" @click="logout">登出</span>
+    Welcome, {{nickName}} ,<span class="link" @click="logout">登出</span>
   </div>
 </div>
 </template>
@@ -16,6 +16,8 @@
 <script lang="ts">
 import { defineComponent, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
+import { LoginState } from '@/store/login';
 
 type PageEvent = 'triggle-menu';
 
@@ -34,6 +36,7 @@ export default defineComponent({
   emits: ['triggle-menu'] as Array<PageEvent>,
   setup(props, context) {
     const router = useRouter();
+    const store = useStore();
     const isTirrgled = ref(props.tirrgled);
     const handleTriggleMenu = () => {
       isTirrgled.value = !isTirrgled.value;
@@ -42,12 +45,16 @@ export default defineComponent({
     const logout = (): void => {
       router.push({ path: '/login' });
     };
+    const loginState: LoginState = store.state.login as LoginState;
+    const nickName = ref(loginState.nickName);
+
     watch(props, (val) => {
       isTirrgled.value = val.tirrgled;
     });
     return {
       handleTriggleMenu,
       logout,
+      nickName,
     };
   },
 });
